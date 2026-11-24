@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="style.css?v=16">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 
@@ -202,6 +202,9 @@
           <div class="fila-aj"><span>Fondo con los colores de la canción</span><button class="interruptor" data-tipo="toggle" data-ajuste="fondoPortada" aria-label="Fondo con los colores de la canción"></button></div>
           <div class="fila-aj"><span>Desenfoque progresivo</span><button class="interruptor" data-tipo="toggle" data-ajuste="desenfoqueProg" aria-label="Desenfoque progresivo"></button></div>
           <div class="fila-aj"><span>Efectos de fiesta del DJ</span><button class="interruptor" data-tipo="toggle" data-ajuste="fiestaDJ" aria-label="Efectos de fiesta del DJ"></button></div>
+          <div class="fila-aj"><span>Reflejos que siguen el dedo</span><button class="interruptor" data-tipo="toggle" data-ajuste="reflejoTactil" aria-label="Reflejos táctiles"></button></div>
+          <div class="fila-aj"><span>Partículas ambientales</span><button class="interruptor" data-tipo="toggle" data-ajuste="particulas" aria-label="Partículas ambientales"></button></div>
+          <div class="fila-aj"><span>Parallax del Vendezú DJ</span><button class="interruptor" data-tipo="toggle" data-ajuste="parallaxDJ" aria-label="Parallax del DJ"></button></div>
         </div>
         <h2>Rendimiento</h2>
         <div class="panel lista-aj">
@@ -209,6 +212,13 @@
           <div class="fila-aj"><span>Reducir desenfoque dinámico</span><button class="interruptor" data-tipo="toggle" data-ajuste="sinBlur" aria-label="Reducir desenfoque"></button></div>
           <div class="fila-aj"><span>Reducir animaciones</span><button class="interruptor" data-tipo="toggle" data-ajuste="sinAnim" aria-label="Reducir animaciones"></button></div>
         </div>
+        <h2>Perfil de rendimiento</h2>
+        <div class="panel seg-aj" data-tipo="seg" data-ajuste="calidad">
+          <button data-valor="maxima">Máxima</button>
+          <button data-valor="equilibrada">Equilibrada</button>
+          <button data-valor="ahorro">Ahorro</button>
+        </div>
+        <p class="nota">Este perfil ajusta la carga visual sin cambiar tus preferencias individuales. Si notas calor o tirones, usa Ahorro.</p>
         <h2>Texto</h2>
         <div class="panel seg-aj" data-tipo="seg" data-ajuste="tamTexto">
           <button data-valor="normal">Normal</button>
@@ -396,6 +406,6 @@
 </div>
 
 <audio id="audio"></audio>
-<script src="app.js?v=17"></script>
+<script src="app.js?v=18"></script>
 </body>
 </html>

@@ -480,3 +480,111 @@ html.sin-fiesta #v-dj .fiesta{display:none}
 }
 .mix-mas{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.6rem;font-weight:300;color:#fff}
 .mix-x{position:absolute;left:8px;top:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem}
+
+
+/* ===== VNDZ Liquid Glass 2.0: reflejo localizado y capas ópticas ===== */
+.panel::after{
+  background:
+    radial-gradient(46% 42% at var(--shine-x,16%) var(--shine-y,0%),rgba(255,255,255,.24),transparent 72%),
+    radial-gradient(110% 70% at 16% -14%,rgba(255,255,255,.32),transparent 55%),
+    radial-gradient(90% 60% at 100% 125%,rgba(255,255,255,.13),transparent 60%);
+  opacity:.82;
+  transition:opacity .22s ease;
+}
+.panel:active::after{opacity:1}
+.panel,.card,.album .cov,.mix-cov,.cat,.dj-btn{isolation:isolate}
+.album .cov::after,.mix-cov::after,.cat::after{
+  background:
+    radial-gradient(42% 42% at var(--shine-x,18%) var(--shine-y,0%),rgba(255,255,255,.34),transparent 72%),
+    linear-gradient(135deg,rgba(255,255,255,.28),transparent 48%);
+  transition:opacity .2s ease;
+}
+.card{overflow:hidden}
+.card::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(45% 38% at var(--shine-x,18%) var(--shine-y,0%),rgba(255,255,255,.2),transparent 75%);
+  opacity:.7;
+}
+html.sin-reflejo-tactil .panel::after,
+html.sin-reflejo-tactil .album .cov::after,
+html.sin-reflejo-tactil .mix-cov::after,
+html.sin-reflejo-tactil .cat::after,
+html.sin-reflejo-tactil .card::after{background:linear-gradient(135deg,rgba(255,255,255,.24),transparent 48%)}
+
+/* Puntos de luz de baja carga: gradientes estáticos animados con transform/opacity */
+.fondo-vivo::before,.fondo-vivo::after{
+  content:"";position:absolute;inset:-18%;pointer-events:none;opacity:.2;
+  background-image:
+    radial-gradient(circle,rgba(255,255,255,.8) 0 1px,transparent 1.8px),
+    radial-gradient(circle,rgba(255,255,255,.5) 0 1px,transparent 2px);
+  background-size:73px 89px,113px 127px;
+  background-position:0 0,31px 47px;
+  transform:translate3d(0,0,0);
+  animation:polvoVNDZ 34s linear infinite;
+}
+.fondo-vivo::after{
+  opacity:.11;background-size:151px 137px,97px 109px;
+  background-position:59px 23px,13px 71px;
+  animation-duration:48s;animation-direction:reverse;
+}
+@keyframes polvoVNDZ{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(38px,-54px,0)}
+}
+html.sin-particulas .fondo-vivo::before,
+html.sin-particulas .fondo-vivo::after{display:none}
+html[data-estilo="claro"] .fondo-vivo::before,
+html[data-estilo="claro"] .fondo-vivo::after{opacity:.1}
+html[data-estilo="solido"] .fondo-vivo::before,
+html[data-estilo="solido"] .fondo-vivo::after{display:none}
+
+/* Volumen 3D del DJ: la escena bascula; el cubo conserva su giro independiente */
+#djCard .escena3d{
+  transform:perspective(900px) rotateX(var(--dj-rx,0deg)) rotateY(var(--dj-ry,0deg));
+  transition:transform .42s cubic-bezier(.2,.8,.2,1);
+  transform-style:preserve-3d;
+}
+#djCard .cubo{filter:drop-shadow(0 22px 22px rgba(0,0,0,.24))}
+#djCard .cara{backface-visibility:hidden}
+html.sin-parallax-dj #djCard .escena3d{transform:none!important}
+html.sin-3d #djCard .escena3d{transform:none!important}
+html.calidad-ahorro .panel{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.calidad-ahorro .fondo-vivo::before,
+html.calidad-ahorro .fondo-vivo::after,
+html.calidad-ahorro .blob{animation:none!important}
+html.calidad-ahorro .dj-aura{filter:none;opacity:.25}
+html.calidad-ahorro .haz{display:none}
+html.calidad-ahorro .panel::after{opacity:.35}
+html.calidad-equilibrada .panel{
+  -webkit-backdrop-filter:blur(min(var(--v-blur),14px)) saturate(155%);
+  backdrop-filter:blur(min(var(--v-blur),14px)) saturate(155%);
+}
+html.calidad-maxima .panel{
+  -webkit-backdrop-filter:blur(var(--v-blur)) saturate(190%) brightness(1.08);
+  backdrop-filter:blur(var(--v-blur)) saturate(190%) brightness(1.08);
+}
+html.sin-rend .panel,html.sin-blur .panel{ -webkit-backdrop-filter:none;backdrop-filter:none }
+html.sin-anim .fondo-vivo::before,html.sin-anim .fondo-vivo::after{animation:none!important}
+html.sin-anim #djCard .escena3d{transition:none}
+html.sin-rend .fondo-vivo::before,html.sin-rend .fondo-vivo::after{display:none}
+html.sin-rend #djCard .cubo{filter:none}
+
+/* Respuesta táctil: deformación breve por transform, sin animar layout */
+@keyframes gelVNDZ{
+  0%{transform:scale(1)}
+  42%{transform:scale(1.035,.975)}
+  72%{transform:scale(.992,1.012)}
+  100%{transform:scale(1)}
+}
+.dock.agua{filter:drop-shadow(0 8px 18px rgba(255,255,255,.12))}
+.dock.agua .pildora{border-radius:48% 52% 44% 56% / 55% 42% 58% 45%}
+.fila-aj:active,.dj-btn:active{animation:gelVNDZ .38s cubic-bezier(.2,.8,.2,1)}
+@media (hover:hover) and (pointer:fine){
+  .panel,.album .cov,.mix-cov,.cat{transition:box-shadow .28s ease,border-color .28s ease}
+  .panel:hover{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.62),inset 0 -1.5px 0 rgba(255,255,255,.12),0 18px 42px rgba(0,0,0,.34)}
+}
+@media (prefers-reduced-motion:reduce){
+  .fondo-vivo::before,.fondo-vivo::after{animation:none!important}
+}

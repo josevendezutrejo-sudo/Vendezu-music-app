@@ -105,7 +105,8 @@ function normalizar(c) {
 const PREF_DEF = {
   estilo: "oscuro", acento: "#ff4d6d", tamTexto: "normal",
   intensidad: 60, espec: true, refraccion: false,
-  fondoAnim: true, portadaAnim: true, efecto3d: true, desenfoqueProg: true, fondoPortada: true, fiestaDJ: true, icono: 0,
+  fondoAnim: true, portadaAnim: true, efecto3d: true, desenfoqueProg: true, fondoPortada: true, fiestaDJ: true,
+  reflejoTactil: true, particulas: true, parallaxDJ: true, calidad: "equilibrada", icono: 0,
   sinAnim: false, sinBlur: false, sinRend: false,
   mezclaOn: true, mezclaSeg: 6, velocidad: 1, letraVisible: true, letrasAuto: true,
   djCada: 3, djHablaSeg: 5, djVoz: true,
@@ -128,6 +129,7 @@ function sanear() {
   });
   P.velocidad = VELS.indexOf(Number(P.velocidad)) >= 0 ? Number(P.velocidad) : 1;
   if (["oscuro", "claro", "degradado", "solido"].indexOf(P.estilo) < 0) P.estilo = "oscuro";
+  if (["maxima", "equilibrada", "ahorro"].indexOf(P.calidad) < 0) P.calidad = "equilibrada";
   if (!/^#[0-9a-f]{6}$/i.test(String(P.acento))) P.acento = PREF_DEF.acento;
   if (["normal", "grande"].indexOf(P.tamTexto) < 0) P.tamTexto = "normal";
   Object.keys(PREF_DEF).forEach((k) => {
@@ -155,6 +157,12 @@ function aplicarPrefs() {
   html.classList.toggle("sin-fondo-portada", !P.fondoPortada);
   html.classList.toggle("sin-pb", !P.desenfoqueProg);
   html.classList.toggle("sin-fiesta", !P.fiestaDJ);
+  html.classList.toggle("sin-reflejo-tactil", !P.reflejoTactil);
+  html.classList.toggle("sin-particulas", !P.particulas);
+  html.classList.toggle("sin-parallax-dj", !P.parallaxDJ);
+  html.classList.toggle("calidad-ahorro", P.calidad === "ahorro");
+  html.classList.toggle("calidad-equilibrada", P.calidad === "equilibrada");
+  html.classList.toggle("calidad-maxima", P.calidad === "maxima");
   html.classList.toggle("texto-grande", P.tamTexto === "grande");
   html.classList.toggle("refraccion", !!P.refraccion && soportaRefraccion());
   portada3d.classList.toggle("anim", !!P.portadaAnim);
@@ -1699,6 +1707,52 @@ function bindTilt() {
   portada3d.addEventListener("pointerup", soltar);
   portada3d.addEventListener("pointercancel", soltar);
   portada3d.addEventListener("pointerleave", soltar);
+
+  const escenaDJ = document.querySelector("#djCard .escena3d");
+  const dj = $("djCard");
+  if (escenaDJ && dj) {
+    let rafDJ = 0, ultimoDJ = null;
+    const moverDJ = (e) => {
+      if (!P.parallaxDJ || !P.efecto3d || P.calidad === "ahorro") return;
+      ultimoDJ = e;
+      if (rafDJ) return;
+      rafDJ = requestAnimationFrame(() => {
+        rafDJ = 0;
+        if (!ultimoDJ) return;
+        const r = escenaDJ.getBoundingClientRect();
+        const px = (ultimoDJ.clientX - r.left) / (r.width || 1) - .5;
+        const py = (ultimoDJ.clientY - r.top) / (r.height || 1) - .5;
+        escenaDJ.style.setProperty("--dj-rx", (-py * 13).toFixed(1) + "deg");
+        escenaDJ.style.setProperty("--dj-ry", (px * 16).toFixed(1) + "deg");
+      });
+    };
+    const resetDJ = () => {
+      escenaDJ.style.setProperty("--dj-rx", "0deg");
+      escenaDJ.style.setProperty("--dj-ry", "0deg");
+    };
+    escenaDJ.addEventListener("pointerdown", moverDJ, { passive: true });
+    escenaDJ.addEventListener("pointermove", (e) => {
+      if (e.buttons || e.pointerType === "touch") moverDJ(e);
+    }, { passive: true });
+    ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => escenaDJ.addEventListener(ev, resetDJ, { passive: true }));
+  }
+
+  // Reflejo especular localizado: solo actualiza variables transformables y una vez por frame.
+  let brilloPendiente = null, brilloRAF = 0;
+  document.addEventListener("pointermove", (e) => {
+    if (!P.reflejoTactil || P.calidad === "ahorro" || P.sinRend) return;
+    const target = e.target.closest(".panel, .album .cov, .mix-cov, .cat, .dj-btn, .card");
+    if (!target) return;
+    brilloPendiente = { target, x: e.clientX, y: e.clientY };
+    if (brilloRAF) return;
+    brilloRAF = requestAnimationFrame(() => {
+      brilloRAF = 0;
+      if (!brilloPendiente || !brilloPendiente.target.isConnected) return;
+      const d = brilloPendiente, r = d.target.getBoundingClientRect();
+      d.target.style.setProperty("--shine-x", ((d.x - r.left) / (r.width || 1) * 100).toFixed(1) + "%");
+      d.target.style.setProperty("--shine-y", ((d.y - r.top) / (r.height || 1) * 100).toFixed(1) + "%");
+    });
+  }, { passive: true });
 }
 
 /* ===== Letra sincronizada (LRCLIB) ===== */

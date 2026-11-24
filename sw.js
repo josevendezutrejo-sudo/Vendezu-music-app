@@ -1,4 +1,4 @@
-const V = "vil-v1";
+const V = "vil-v2";
 const CORE = ["./", "index.html", "style.css", "app.js", "manifest.json", "icon-192.png", "icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(V).then((c) => c.addAll(CORE)).catch(() => {}));
